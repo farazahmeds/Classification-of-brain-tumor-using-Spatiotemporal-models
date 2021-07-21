@@ -1,0 +1,195 @@
+#check augmentations.
+
+import torchio as tio
+from torchio.transforms import preprocessing
+
+import torch
+import torchvision
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image, ImageEnhance
+from viz import show_fpg
+from PIL import Image
+from PIL import ImageOps
+
+p1 = tio.Subject(
+        t1=tio.Image('BraTS19_CBICA_AOC_1_t1ce.nii.gz', mylabel=1), #mylabel is classlabel
+
+        diagnosis='I',
+    )
+
+subjects_list = [p1]
+sample = tio.ImagesDataset([p1])[0]
+
+
+data = sample['t1']['data'].numpy()[0]
+print (sample['t1']['data'].shape)
+
+
+size_r, size_a, size_s = data.shape
+
+slice = data[:, :, 55] # or just data[..., k]
+
+prettier_slice = np.rot90(np.fliplr(data[:, :, 83]))
+plt.imshow(prettier_slice, cmap='gray', origin='lower')
+plt.show()
+
+aqua1 = prettier_slice
+
+
+random_affine = tio.RandomSpike(3,3)
+
+
+kk = random_affine(sample)
+
+data = kk['t1']['data'].numpy()[0]
+print (sample['t1']['data'].shape)
+
+
+size_r, size_a, size_s = data.shape
+
+slice = data[:, :, 83] # or just data[..., k]
+
+prettier_slice = np.rot90(np.fliplr(data[:, :, 83]))
+plt.imshow(prettier_slice, cmap='gray', origin='lower')
+
+plt.show()
+
+
+
+
+
+
+ax1 = plt.subplot(1,2,1)
+ax1.imshow(aqua1,cmap='gray' )
+ax1.set_title('Original image')
+
+ax2 = plt.subplot(1,2,2)
+ax2.imshow((prettier_slice), cmap='gray')
+ax2.set_title('Random Spike')
+
+
+
+
+
+
+plt.show()
+
+#########################################################################################
+# Intensity Transform
+# rescale = tio.transforms.preprocessing.RescaleIntensity((-1, 1), percentiles=(1, 90))
+#
+# kk = rescale(sample)
+#
+# data = kk['t1']['data'].numpy()[0]
+# print (sample['t1']['data'].shape)
+#
+#
+# size_r, size_a, size_s = data.shape
+#
+# slice = data[:, :, 83] # or just data[..., k]
+#
+# prettier_slice = np.rot90(np.fliplr(data[:, :, 83]))
+# plt.imshow(prettier_slice, cmap='gray', origin='lower')
+#
+# plt.show()
+
+
+#########################################################################################
+#Random Elasticity
+
+# max_displacement = 40, 20, 0  # in x, y and z directions
+# random_elastic = tio.RandomElasticDeformation(max_displacement=max_displacement)
+# kk = random_elastic(sample)
+# # to_pil(slice_elastic)
+# #
+# # kk = rescale(sample)
+#
+# data = kk['t1']['data'].numpy()[0]
+# print (sample['t1']['data'].shape)
+#
+#
+# size_r, size_a, size_s = data.shape
+#
+# slice = data[:, :, 83] # or just data[..., k]
+#
+# prettier_slice = np.rot90(np.fliplr(data[:, :, 83]))
+# plt.imshow(prettier_slice, cmap='gray', origin='lower')
+# plt.grid()
+# plt.show()
+
+#%$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+#Random Affine
+
+# random_affine = tio.RandomAffine()
+#
+# kk = random_affine(sample)
+#
+# data = kk['t1']['data'].numpy()[0]
+# print (sample['t1']['data'].shape)
+#
+#
+# size_r, size_a, size_s = data.shape
+#
+# slice = data[:, :, 83] # or just data[..., k]
+#
+# prettier_slice = np.rot90(np.fliplr(data[:, :, 83]))
+# plt.imshow(prettier_slice, cmap='gray', origin='lower')
+# plt.grid()
+# plt.show()
+
+################################Random Flip############################################
+# random_affine = tio.RandomFlip(axes=0)
+#
+# kk = random_affine(sample)
+#
+# data = kk['t1']['data'].numpy()[0]
+# print (sample['t1']['data'].shape)
+#
+#
+# size_r, size_a, size_s = data.shape
+#
+# slice = data[:, :, 83] # or just data[..., k]
+#
+# prettier_slice = np.rot90(np.fliplr(data[:, :, 83]))
+# plt.imshow(prettier_slice, cmap='gray', origin='lower')
+#
+# plt.show()
+
+################################Random Motion############################################
+# random_affine = tio.RandomMotion()
+#
+# kk = random_affine(sample)
+#
+# data = kk['t1']['data'].numpy()[0]
+# print (sample['t1']['data'].shape)
+#
+#
+# size_r, size_a, size_s = data.shape
+#
+# slice = data[:, :, 83] # or just data[..., k]
+#
+# prettier_slice = np.rot90(np.fliplr(data[:, :, 83]))
+# plt.imshow(prettier_slice, cmap='gray', origin='lower')
+#
+# plt.show()
+
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$Random Spike
+# random_affine = tio.RandomSpike(p=1.0)
+#
+#
+# kk = random_affine(sample)
+#
+# data = kk['t1']['data'].numpy()[0]
+# print (sample['t1']['data'].shape)
+#
+#
+# size_r, size_a, size_s = data.shape
+#
+# slice = data[:, :, 83] # or just data[..., k]
+#
+# prettier_slice = np.rot90(np.fliplr(data[:, :, 83]))
+# plt.imshow(prettier_slice, cmap='gray', origin='lower')
+#
+# plt.show()
