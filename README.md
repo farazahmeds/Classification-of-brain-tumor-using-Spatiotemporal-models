@@ -12,4 +12,6 @@ different, even unrelated dataset before training them for the task of tumour cl
 Pre-trained ResNet Mixed Convolution was observed to be the best model in these experiments, achieving a macro F1-score
 of 0.9345 and a test accuracy of 96.98%, while at the same time being the model with the least computational cost.
 
+<p align="center">
 <img src="meta/nets.png" alt="Your image title" width="500"/>
+</p>
