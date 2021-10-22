@@ -57,6 +57,9 @@ num_workers = 5
 opt_level = 'O1'
 load_model=True
 
+
+cwd = os.getcwd()
+
 path_to_volumes = Path(cwd, 'dataset')
 
 volumes = Datasets(path_to_volumes)
@@ -172,14 +175,13 @@ tb = SummaryWriter(f'/scratch/faraz/Thesis/runs')
 
 
 
-def save_checkpoint(state,filename="/run/media/faraz/USB/model/cross_fold_mixed_conv2.pth.tar"):
+def save_checkpoint(state,filename=Path(cwd,'output/{}'.format('foo.pth.tar')):
     torch.save(state,filename)
 
 
 if load_model:
-    # load_checkpoint(torch.load("/run/media/faraz/USB/model/lucky13.pth.tar"))
     from resume_from_checkpoint import resume_from_checkpoint
-    fpath = '/run/media/faraz/USB/model/cross_fold_mixed_conv2.pth.tar'
+    fpath = Path(cwd,'output/{}'.format('foo.pth.tar')
     start_epoch = resume_from_checkpoint(fpath, model, optimizer)
 
 
