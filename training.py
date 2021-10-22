@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from torch.optim import lr_scheduler
 import torch.multiprocessing
+from dataset.datasets import Datasets
 
 from collections import OrderedDict
 
@@ -56,6 +57,11 @@ num_workers = 5
 opt_level = 'O1'
 load_model=True
 
+path_to_volumes = Path(cwd, 'dataset')
+
+volumes = Datasets(path_to_volumes)
+
+total_Samples=volumes.return_total_samples()
 
 
 
@@ -90,7 +96,7 @@ transforms = [rescale, flip, randaffine]
 transform = Compose(transforms)
 
 # ImagesDataset is a subclass of torch.data.utils.Dataset
-subjects_dataset = torchio.SubjectsDataset(brats(), transform=transform)
+subjects_dataset = torchio.SubjectsDataset(total_Samples, transform=transform)
 
 # Images are processed in parallel thanks to a PyTorch DataLoader
 
