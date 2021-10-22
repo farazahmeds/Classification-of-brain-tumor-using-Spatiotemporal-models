@@ -8,10 +8,13 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from torch.optim import lr_scheduler
 import torch.multiprocessing
-from dataset.datasets import Datasets
-
 import torchvision
 from torchvision import datasets, models, transforms
+
+from dataset.datasets import Datasets
+
+import hydra
+from omegaconf import DictConfig, OmegaConf
 
 import torchio
 from torchio.transforms import (
@@ -53,6 +56,8 @@ load_model=True
 cwd = os.getcwd()
 
 path_to_volumes = Path(cwd, 'dataset')
+
+config = OmegaConf.load(Path(cwd, 'configs/config.yaml'))
 
 volumes = Datasets(path_to_volumes)
 
