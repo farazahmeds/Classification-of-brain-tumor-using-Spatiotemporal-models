@@ -165,7 +165,7 @@ for epoch in range(config.training.num_epoch):
         #     save_checkpoint(checkpoint)
 
     for i, traindata in enumerate(trainloader):
-        images = F.interpolate(traindata['t1'][torchio.DATA], scale_factor=(0.5,0.5,0.5)).to('cuda:0')
+        images = F.interpolate(traindata['t1'][torchio.DATA], scale_factor=(config.dataset.img_scale_factor,config.dataset.img_scale_factor,config.dataset.img_scale_factor)).to('cuda:0')
         labels = traindata['t1']['mylabel'].to('cuda:0')
 
         optimizer.zero_grad()
