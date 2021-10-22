@@ -136,7 +136,7 @@ lbllist = torch.zeros(0, dtype=torch.long).to('cuda:0')
 
 model, optimizer = amp.initialize(model, optimizer, opt_level=opt_level)
 
-tb = SummaryWriter(f'/scratch/faraz/Thesis/runs')
+tb = SummaryWriter(Path(cwd, 'runs'))
 
 
 def save_checkpoint(state,filename=Path(cwd,'output/{}'.format('foo.pth.tar')):
