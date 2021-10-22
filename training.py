@@ -10,46 +10,38 @@ from torch.optim import lr_scheduler
 import torch.multiprocessing
 from dataset.datasets import Datasets
 
-from collections import OrderedDict
-
-from torchsampler import ImbalancedDatasetSampler
-
 import torchvision
 from torchvision import datasets, models, transforms
 
 import torchio
-from torchio.transforms import OneOf
 from torchio.transforms import (
+    CropOrPad
+    OneOf
     RescaleIntensity,
     RandomAffine,
     RandomElasticDeformation,
+    RandomFlip
     Compose,
 )
-from torchio import RandomFlip
 
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage import zoom
 from livelossplot import PlotLosses
-from torchio.transforms import CropOrPad
 
-import time
 import os
-import pandas as pd
-from skimage import io
 import numpy as np
 from torchvision.transforms import transforms
 from torch.utils.tensorboard import SummaryWriter
 from apex import amp
 
-from sklearn.metrics import confusion_matrix
-import itertools
-
 from dataset import brats
+
+from sklearn.metrics import confusion_matrix
 from plotcm import plot_confusion_matrix
 
-torch.manual_seed(23)
-os.environ['TORCH_HOME'] = '/scratch/faraz/tmp4'
+torch.manual_seed(2321)
+
 num_classes = 3
 learning_rate = 0.00001
 num_epochs = 100
@@ -66,34 +58,17 @@ volumes = Datasets(path_to_volumes)
 
 total_Samples=volumes.return_total_samples()
 
-
-
-# class weights
-
-# normedWeights = [1 - (x / sum(weights)) for x in weights]
-# normedWeights = torch.FloatTensor(normedWeights)
-
-
-# class_weights = torch.FloatTensor([0.8760, 0.5617, 0.5617]).cuda()
-
 class_weights = torch.FloatTensor([3.54,1,1]).cuda()
 
 #
 # Let's use one preprocessing transform and one augmentation transform
 # This transform will be applied only to torchio.INTENSITY images:
 
+#Transforms
 rescale = RescaleIntensity((0.05, 99.5))
-
-# As RandomAffine is faster then RandomElasticDeformation, we choose to
-# apply RandomAffine 80% of the times and RandomElasticDeformation the rest
-# Also, there is a 25% chance that none of them will be applied
-
 randaffine = torchio.RandomAffine(scales=(0.9,1.2),degrees=10, isotropic=True, image_interpolation='nearest')
-
 flip = torchio.RandomFlip(axes=('LR'), p=0.5)
 croporpad = CropOrPad(target_shape=(240, 240, 155))
-
-# Transforms can be composed as in torchvision.transforms
 transforms = [rescale, flip, randaffine]
 
 transform = Compose(transforms)
@@ -101,17 +76,10 @@ transform = Compose(transforms)
 # ImagesDataset is a subclass of torch.data.utils.Dataset
 subjects_dataset = torchio.SubjectsDataset(total_Samples, transform=transform)
 
-# Images are processed in parallel thanks to a PyTorch DataLoader
-
 trainset, testset = torch.utils.data.random_split(subjects_dataset, [414, 177], generator=torch.Generator().manual_seed(19))
-
-
 
 trainloader = DataLoader(dataset=trainset,  batch_size=1, shuffle=True)
 testloader = DataLoader(dataset=testset,   batch_size=1, shuffle=True)
-
-
-
 
 # class R2Plus1dStem4MRI(nn.Sequential):
 #     """R(2+1)D stem is different than the default one as it uses separated 3D convolution
@@ -147,7 +115,6 @@ model = torchvision.models.video.mc3_18(pretrained=True)
 model.stem = modifybasicstem() # change the stem based on the  model 
 
 
-
 # regularization
 
 model.fc = nn.Sequential(
@@ -162,7 +129,6 @@ model.to('cuda:0')
 criterion = nn.CrossEntropyLoss(weight=class_weights)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-3)
-# scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50,100,150], gamma=0.1)
 
 # Initialize the prediction and label lists(tensors) for confusion matrix
 predlist = torch.zeros(0, dtype=torch.long).to('cuda:0')
@@ -171,8 +137,6 @@ lbllist = torch.zeros(0, dtype=torch.long).to('cuda:0')
 model, optimizer = amp.initialize(model, optimizer, opt_level=opt_level)
 
 tb = SummaryWriter(f'/scratch/faraz/Thesis/runs')
-
-
 
 
 def save_checkpoint(state,filename=Path(cwd,'output/{}'.format('foo.pth.tar')):
@@ -209,13 +173,6 @@ for epoch in range(num_epochs):
     for i, traindata in enumerate(trainloader):
         images = F.interpolate(traindata['t1'][torchio.DATA], scale_factor=(0.5,0.5,0.5)).to('cuda:0')
         labels = traindata['t1']['mylabel'].to('cuda:0')
-
-        # print(labels)
-
-
-
-        optimizer.zero_grad()
-
 
         optimizer.zero_grad()
 
@@ -260,8 +217,7 @@ for epoch in range(num_epochs):
     print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
           .format(epoch + 1, num_epochs, i + 1, len(trainloader), (total_loss / total_images),
                   (total_correct / total_images) * 100))
-
-
+                 
 
     # Testing the model
 
@@ -314,7 +270,9 @@ for epoch in range(num_epochs):
     print(class_accuracy)
 
 liveloss.draw()
-
+                 
+#Computing metrics:
+                 
 # Confusion matrix
 conf_mat = confusion_matrix(lbllist.cpu().numpy(), predlist.cpu().numpy())
 
