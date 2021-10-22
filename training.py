@@ -43,15 +43,8 @@ from dataset import brats
 from sklearn.metrics import confusion_matrix
 from plotcm import plot_confusion_matrix
 
-torch.manual_seed(2321)
 
-num_classes = 3
-learning_rate = 0.00001
-num_epochs = 100
-num_workers = 5
-opt_level = 'O1'
-load_model=True
-
+load_model = config.load_model
 
 cwd = os.getcwd()
 
@@ -63,11 +56,9 @@ volumes = Datasets(path_to_volumes)
 
 total_Samples=volumes.return_total_samples()
 
-class_weights = torch.FloatTensor([3.54,1,1]).cuda()
+torch.manual_seed(config.global_seed)
 
-#
-# Let's use one preprocessing transform and one augmentation transform
-# This transform will be applied only to torchio.INTENSITY images:
+class_weights = torch.FloatTensor([3.54,1,1]).cuda()
 
 #Transforms
 rescale = RescaleIntensity((0.05, 99.5))
@@ -81,7 +72,7 @@ transform = Compose(transforms)
 # ImagesDataset is a subclass of torch.data.utils.Dataset
 subjects_dataset = torchio.SubjectsDataset(total_Samples, transform=transform)
 
-trainset, testset = torch.utils.data.random_split(subjects_dataset, [414, 177], generator=torch.Generator().manual_seed(19))
+trainset, testset = torch.utils.data.random_split(subjects_dataset, [confg.dataset.train_samples, config.dataset.test_samples], generator=torch.Generator().manual_seed(confg.dataset.train_test_split_seed))
 
 trainloader = DataLoader(dataset=trainset,  batch_size=1, shuffle=True)
 testloader = DataLoader(dataset=testset,   batch_size=1, shuffle=True)
@@ -124,7 +115,7 @@ model.stem = modifybasicstem() # change the stem based on the  model
 
 model.fc = nn.Sequential(
     nn.Dropout(0.3),
-    nn.Linear(model.fc.in_features, num_classes)
+    nn.Linear(model.fc.in_features, config.training.num_classes)
 )
 
 liveloss = PlotLosses()
@@ -133,13 +124,13 @@ model.to('cuda:0')
 
 criterion = nn.CrossEntropyLoss(weight=class_weights)
 
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-3)
+optimizer = torch.optim.Adam(model.parameters(), lr=config.training.learning_rate, weight_decay=config.training.weight_decay)
 
 # Initialize the prediction and label lists(tensors) for confusion matrix
 predlist = torch.zeros(0, dtype=torch.long).to('cuda:0')
 lbllist = torch.zeros(0, dtype=torch.long).to('cuda:0')
 
-model, optimizer = amp.initialize(model, optimizer, opt_level=opt_level)
+model, optimizer = amp.initialize(model, optimizer, opt_level=config.model.opt_level)
 
 tb = SummaryWriter(Path(cwd, 'runs'))
 
@@ -154,9 +145,7 @@ if load_model:
     start_epoch = resume_from_checkpoint(fpath, model, optimizer)
 
 
-# init_start_epoch = start_epoch
-
-for epoch in range(num_epochs):
+for epoch in range(config.training.num_epoch):
 
     logs = {}
     total_correct = 0
@@ -220,7 +209,7 @@ for epoch in range(num_epochs):
     tb.add_scalar('Training accuracy', running_trainacc, global_step=epoch)
 
     print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
-          .format(epoch + 1, num_epochs, i + 1, len(trainloader), (total_loss / total_images),
+          .format(epoch + 1, config.tranining.num_epoch, i + 1, len(trainloader), (total_loss / total_images),
                   (total_correct / total_images) * 100))
                  
 
@@ -232,14 +221,12 @@ for epoch in range(num_epochs):
 
         for testdata in testloader:
             # print ("for testdata in testloader, len of testdata",len(testdata))
-            images = F.interpolate(testdata['t1'][torchio.DATA], scale_factor=(0.5,0.5,0.5)).to('cuda:0')
+            images = F.interpolate(testdata['t1'][torchio.DATA], scale_factor=(config.dataset.img_scale_factor,config.dataset.img_scale_factor,config.dataset.img_scale_factor)).to('cuda:0')
 
             labels = testdata['t1']['mylabel'].to('cuda:0')
             outputs = model(images)
 
             _, predicted = torch.max(outputs.data, 1)
-
-
 
             predlist = torch.cat([predlist, predicted.view(-1)])  # Append batch prediction results
 
