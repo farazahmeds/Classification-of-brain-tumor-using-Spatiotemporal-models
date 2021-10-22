@@ -74,8 +74,8 @@ subjects_dataset = torchio.SubjectsDataset(total_Samples, transform=transform)
 
 trainset, testset = torch.utils.data.random_split(subjects_dataset, [confg.dataset.train_samples, config.dataset.test_samples], generator=torch.Generator().manual_seed(confg.dataset.train_test_split_seed))
 
-trainloader = DataLoader(dataset=trainset,  batch_size=1, shuffle=True)
-testloader = DataLoader(dataset=testset,   batch_size=1, shuffle=True)
+trainloader = DataLoader(dataset=trainset,  batch_size=config.training.batch_size, shuffle=True)
+testloader = DataLoader(dataset=testset,   batch_size=config.training.batch_size, shuffle=True)
 
 # class R2Plus1dStem4MRI(nn.Sequential):
 #     """R(2+1)D stem is different than the default one as it uses separated 3D convolution
@@ -114,7 +114,7 @@ model.stem = modifybasicstem() # change the stem based on the  model
 # regularization
 
 model.fc = nn.Sequential(
-    nn.Dropout(0.3),
+    nn.Dropout(config.training.dropout),
     nn.Linear(model.fc.in_features, config.training.num_classes)
 )
 
