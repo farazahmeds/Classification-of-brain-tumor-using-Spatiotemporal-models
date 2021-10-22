@@ -6,7 +6,6 @@ global_seed: 341
 dataset:
   img_scale_factor: 0.5
   train_test_split_seed: 55
-
   
 training:
   num_classes: 3
