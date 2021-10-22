@@ -33,7 +33,7 @@ class Datasets:
 
     def ixi(self):
 
-        ixi = []
+        ixi = [] # Healthy samples
 
         for path, currentDirectory, files in os.walk(os.path.join(self.dataset_path, 'data/IXI')):
             for file in files:
