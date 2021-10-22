@@ -11,3 +11,5 @@ superior to the pure 3D convolutional model, ResNet18. Furthermore, it was also 
 different, even unrelated dataset before training them for the task of tumour classification improves the performance. Finally,
 Pre-trained ResNet Mixed Convolution was observed to be the best model in these experiments, achieving a macro F1-score
 of 0.9345 and a test accuracy of 96.98%, while at the same time being the model with the least computational cost.
+
+![alt text](http://url/to/img.png) meta/nets.png
