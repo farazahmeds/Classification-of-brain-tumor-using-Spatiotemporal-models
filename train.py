@@ -41,7 +41,7 @@ from torch.utils.tensorboard import SummaryWriter
 # from apex.apex import amp
 
 from sklearn.metrics import confusion_matrix
-from plotcm import plot_confusion_matrix
+from score_gen.confmatrix import plot_confusion_matrix
 
 from dataset.datasets import Datasets
 
