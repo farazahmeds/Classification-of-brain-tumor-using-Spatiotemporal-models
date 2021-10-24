@@ -12,5 +12,3 @@ class modifybasicstem(nn.Sequential):
                       padding=(1, 3, 3), bias=False),
             nn.BatchNorm3d(64),
             nn.ReLU(inplace=True))
-
-    print ('this is 3d cov')
