@@ -82,9 +82,15 @@ def train(config: DictConfig) -> None:
     trainloader = DataLoader(dataset=trainset,  batch_size=config.training.batch_size, shuffle=True)
     testloader = DataLoader(dataset=testset,   batch_size=config.training.batch_size, shuffle=True)
 
-    model = torchvision.models.video.mc3_18(pretrained=True)
-
-    model.stem = hydra.utils.instantiate(config.models)
+    if config.models.model == 'resnet2p1':
+        model = torchvision.models.video.r2plus1d_18(pretrained=config.pretrain)
+        model.stem = hydra.utils.instantiate(config.stems)
+    elif config.models.model == 'resnet_mixed_conv':
+        model = torchvision.models.video.mc3_18(pretrained=config.pretrain)
+        model.stem = hydra.utils.instantiate(config.stems)
+    else:
+        model = torchvision.models.video.r3d_18(pretrained=config.pretrain)
+        model.stem = hydra.utils.instantiate(config.stems)
 
     # regularization
 
