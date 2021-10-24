@@ -83,13 +83,13 @@ def train(config: DictConfig) -> None:
 
     if config.models.model == 'resnet2p1':
         model = torchvision.models.video.r2plus1d_18(pretrained=config.pretrain)
-        model.stem = hydra.utils.instantiate(config.stems)
+        model.stem = hydra.utils.instantiate(config.resnet2p1Stem)
     elif config.models.model == 'resnet_mixed_conv':
         model = torchvision.models.video.mc3_18(pretrained=config.pretrain)
-        model.stem = hydra.utils.instantiate(config.stems)
+        model.stem = hydra.utils.instantiate(config.resnet_mixed_convStem)
     else:
         model = torchvision.models.video.r3d_18(pretrained=config.pretrain)
-        model.stem = hydra.utils.instantiate(config.stems)
+        model.stem = hydra.utils.instantiate(config.conv3dStem)
 
     # regularization
 
