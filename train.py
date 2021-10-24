@@ -2,58 +2,60 @@ import hydra
 from omegaconf import DictConfig, OmegaConf
 from hydra.utils import instantiate
 
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch import utils
+from torch.utils.data import dataset
+from torch.utils.data import DataLoader
+import torch.nn.functional as F
+from torch.autograd import Variable
+from torch.optim import lr_scheduler
+import torch.multiprocessing
+import torchvision
+from torchvision import datasets, models, transforms
+
+import torchio
+
+from torchio.transforms import (
+    CropOrPad,
+    OneOf,
+    RescaleIntensity,
+    RandomAffine,
+    RandomElasticDeformation,
+    RandomFlip,
+    Compose,
+)
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.ndimage import zoom
+from livelossplot import PlotLosses
+
+import os
+from pathlib import Path
+
+import numpy as np
+from torchvision.transforms import transforms
+from torch.utils.tensorboard import SummaryWriter
+# from apex.apex import amp
+
+from sklearn.metrics import confusion_matrix
+from plotcm import plot_confusion_matrix
+
+from dataset.datasets import Datasets
+
 def train(config: DictConfig) -> None:
-
-    import torch
-    import torch.nn as nn
-    import torch.optim as optim
-    from torch import utils
-    from torch.utils.data import dataset
-    from torch.utils.data import DataLoader
-    import torch.nn.functional as F
-    from torch.autograd import Variable
-    from torch.optim import lr_scheduler
-    import torch.multiprocessing
-    import torchvision
-    from torchvision import datasets, models, transforms
-
-    import torchio
-
-    from torchio.transforms import (
-        CropOrPad,
-        OneOf,
-        RescaleIntensity,
-        RandomAffine,
-        RandomElasticDeformation,
-        RandomFlip,
-        Compose,
-    )
-
-    import numpy as np
-    import matplotlib.pyplot as plt
-    from scipy.ndimage import zoom
-    from livelossplot import PlotLosses
-
-    import os
-    from pathlib import Path
-
-    import numpy as np
-    from torchvision.transforms import transforms
-    from torch.utils.tensorboard import SummaryWriter
-    # from apex.apex import amp
-
-    from sklearn.metrics import confusion_matrix
-    from plotcm import plot_confusion_matrix
-
-    from dataset.datasets import Datasets
 
     cwd = os.getcwd()
     #
     # path_to_volumes = Path(cwd, 'dataset')
     volumes = hydra.utils.instantiate(config.dataset_)
+
     # volumes = Datasets(path_to_volumes)
 
     total_Samples = volumes.return_total_samples()
+    print ('total_samples are', len(total_Samples))
     torch.manual_seed(config.global_seed)
 
     load_model = config.load_model
