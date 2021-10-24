@@ -20,5 +20,3 @@ class R2Plus1dStem4MRI(nn.Sequential):
                       bias=False),
             nn.BatchNorm3d(64),
             nn.ReLU(inplace=True))
-
-        print ('this is two plus1')
