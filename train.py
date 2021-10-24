@@ -55,7 +55,6 @@ def train(config: DictConfig) -> None:
     # volumes = Datasets(path_to_volumes)
 
     total_Samples = volumes.return_total_samples()
-    print ('total_samples are', len(total_Samples))
     torch.manual_seed(config.global_seed)
 
     load_model = config.load_model
