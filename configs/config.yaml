@@ -1,6 +1,10 @@
 work_dir: ${hydra:runtime.cwd}
 data_dir: ${work_dir}/dataset/data/
 
+dataset_:
+  _target_: dataset.datasets.Datasets
+  dataset_path: ${work_dir}/dataset/data/
+
 global_seed: 341
 
 dataset:
