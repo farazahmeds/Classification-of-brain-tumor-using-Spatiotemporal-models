@@ -142,9 +142,6 @@ def train(config: DictConfig) -> None:
     if load_model:
         the_model = torch.load(Path(cwd,'outputs'))
 
-        # # fpath = Path(cwd,'outputs/{}'.format('foo.pth.tar'))
-        # start_epoch = resume_from_checkpoint(fpath, model, optimizer)
-
 
     for epoch in range(config.training.num_epoch):
 
