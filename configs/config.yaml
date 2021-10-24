@@ -27,9 +27,12 @@ models:
 # model: 'resnet_mixed_conv'
 # model: '3dconv'
 
-stems:
-  _target_: stems.resnet2p1.R2Plus1dStem4MRI                                   #ResNet(2+1)D
-#  _target_: stems.resnet_mixed_conv.modifybasicstem                            #ResNet Mixed Convolutions
-#  _target_: stems.3dconv.modifybasicstem                                       #3D Convolutions
-
+resnet2p1Stem:
+  _target_: stems.resnet2p1.R2Plus1dStem4MRI
+resnet_mixed_convStem:
+  _target_: stems.resnet_mixed_conv.modifybasicstem
+conv3dStem:
+  _target_: stems.3dconv.modifybasicstem
+  
+  
 load_model: False
