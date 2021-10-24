@@ -17,6 +17,7 @@ import hydra
 from omegaconf import DictConfig, OmegaConf
 
 import torchio
+
 from torchio.transforms import (
     CropOrPad,
     OneOf,
@@ -34,18 +35,14 @@ from livelossplot import PlotLosses
 
 import os
 from pathlib import Path
+
 import numpy as np
 from torchvision.transforms import transforms
 from torch.utils.tensorboard import SummaryWriter
-from apex import amp
-
-from dataset import brats
+# from apex.apex import amp
 
 from sklearn.metrics import confusion_matrix
 from plotcm import plot_confusion_matrix
-
-
-load_model = config.load_model
 
 cwd = os.getcwd()
 
@@ -58,6 +55,8 @@ volumes = Datasets(path_to_volumes)
 total_Samples=volumes.return_total_samples()
 
 torch.manual_seed(config.global_seed)
+
+load_model = config.load_model
 
 class_weights = torch.FloatTensor([3.54,1,1]).cuda()
 
@@ -76,7 +75,7 @@ subjects_dataset = torchio.SubjectsDataset(total_Samples, transform=transform)
 train_set_samples = (int(len(total_Samples)-0.3*len(total_Samples)))  #train_test_split
 test_set_samples =  (int(len(total_Samples))-(train_set_samples))
 
-trainset, testset = torch.utils.data.random_split(subjects_dataset, [train_set_samples, test_set_samples], generator=torch.Generator().manual_seed(confg.dataset.train_test_split_seed))
+trainset, testset = torch.utils.data.random_split(subjects_dataset, [train_set_samples, test_set_samples], generator=torch.Generator().manual_seed(config.dataset.train_test_split_seed))
 
 trainloader = DataLoader(dataset=trainset,  batch_size=config.training.batch_size, shuffle=True)
 testloader = DataLoader(dataset=testset,   batch_size=config.training.batch_size, shuffle=True)
@@ -134,18 +133,18 @@ optimizer = torch.optim.Adam(model.parameters(), lr=config.training.learning_rat
 predlist = torch.zeros(0, dtype=torch.long).to('cuda:0')
 lbllist = torch.zeros(0, dtype=torch.long).to('cuda:0')
 
-model, optimizer = amp.initialize(model, optimizer, opt_level=config.model.opt_level)
+# model, optimizer = amp.initialize(model, optimizer, opt_level=config.model.opt_level)
 
 tb = SummaryWriter(Path(cwd, 'runs'))
 
 
-def save_checkpoint(state,filename=Path(cwd,'output/{}'.format('foo.pth.tar')):
+def save_checkpoint(state,filename=Path(cwd,'output/{}'.format('foo.pth.tar'))):
     torch.save(state,filename)
 
 
 if load_model:
     from resume_from_checkpoint import resume_from_checkpoint
-    fpath = Path(cwd,'output/{}'.format('foo.pth.tar')
+    fpath = Path(cwd,'output/{}'.format('foo.pth.tar'))
     start_epoch = resume_from_checkpoint(fpath, model, optimizer)
 
 
@@ -185,9 +184,9 @@ for epoch in range(config.training.num_epoch):
         loss = criterion(outputs, labels)  # ....>
 
         # Backward prop
-        # loss.backward()
-        with amp.scale_loss(loss, optimizer) as scaled_loss:
-            scaled_loss.backward()
+        loss.backward()
+        # with amp.scale_loss(loss, optimizer) as scaled_loss:
+        #     scaled_loss.backward()
 
         # Updating gradients
         optimizer.step()
