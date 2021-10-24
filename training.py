@@ -18,12 +18,12 @@ from omegaconf import DictConfig, OmegaConf
 
 import torchio
 from torchio.transforms import (
-    CropOrPad
-    OneOf
+    CropOrPad,
+    OneOf,
     RescaleIntensity,
     RandomAffine,
     RandomElasticDeformation,
-    RandomFlip
+    RandomFlip,
     Compose,
 )
 
