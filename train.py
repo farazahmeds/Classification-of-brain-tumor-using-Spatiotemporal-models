@@ -55,7 +55,7 @@ def train(config: DictConfig) -> None:
     # volumes = Datasets(path_to_volumes)
 
     total_Samples = volumes.return_total_samples()
-
+    print ('total_samples are', len(total_Samples))
     torch.manual_seed(config.global_seed)
 
     load_model = config.load_model
@@ -82,39 +82,9 @@ def train(config: DictConfig) -> None:
     trainloader = DataLoader(dataset=trainset,  batch_size=config.training.batch_size, shuffle=True)
     testloader = DataLoader(dataset=testset,   batch_size=config.training.batch_size, shuffle=True)
 
-    # class R2Plus1dStem4MRI(nn.Sequential):
-    #     """R(2+1)D stem is different than the default one as it uses separated 3D convolution
-    #     """
-    #
-    #     def __init__(self):
-    #         super(R2Plus1dStem4MRI, self).__init__(
-    #             nn.Conv3d(1, 45, kernel_size=(1, 7, 7),
-    #                       stride=(1, 2, 2), padding=(0, 3, 3),
-    #                       bias=False),
-    #             nn.BatchNorm3d(45),
-    #             nn.ReLU(inplace=True),
-    #
-    #             nn.Conv3d(45, 64, kernel_size=(3, 1, 1),
-    #                       stride=(1, 1, 1), padding=(1, 0, 0),
-    #                       bias=False),
-    #             nn.BatchNorm3d(64),
-    #             nn.ReLU(inplace=True))
-
-    class modifybasicstem(nn.Sequential):
-        """The default conv-batchnorm-relu stem
-        """
-        def __init__(self):
-            super(modifybasicstem, self).__init__(
-                nn.Conv3d(1, 64, kernel_size=(3, 7, 7), stride=(1, 2, 2),
-                          padding=(1, 3, 3), bias=False),
-                nn.BatchNorm3d(64),
-                nn.ReLU(inplace=True))
-
     model = torchvision.models.video.mc3_18(pretrained=True)
 
-    # model.stem =  R2Plus1dStem4MRI()
-    model.stem = modifybasicstem() # change the stem based on the  model
-
+    model.stem = hydra.utils.instantiate(config.models)
 
     # regularization
 
