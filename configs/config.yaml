@@ -20,7 +20,10 @@ training:
   dropout: 0.5
   weight_decay: 0.001
 
-model:
-  opt_level: 'O1'
+models:
+  _target_: models.resnet2p1.R2Plus1dStem4MRI                                    #ResNet(2+1)D
+#  _target_: models.resnet_mixed_conv.modifybasicstem                            #ResNet Mixed Convolutions
+#  _target_: models.3dconv.modifybasicstem                                       #3D Convolutions
 
 load_model: False
+
