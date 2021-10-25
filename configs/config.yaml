@@ -1,6 +1,11 @@
 work_dir: ${hydra:runtime.cwd}
 data_dir: ${work_dir}/dataset/data/
 
+wandb_logger:
+  project: 'spatiospatial'
+  entity: 'nizamani'
+  group: 'Resnet_2p1'
+
 dataset_:
   _target_: dataset.datasets.Datasets
   dataset_path: ${work_dir}/dataset/data/
@@ -8,14 +13,14 @@ dataset_:
 global_seed: 341
 
 dataset:
-  img_scale_factor: 0.5
+  img_scale_factor: 0.7
   train_test_split_seed: 55
   
 training:
   num_classes: 3
   batch_size: 1
   learning_rate: 0.001
-  num_epoch : 100
+  num_epoch : 2
   num_workers : 5
   dropout: 0.5
   weight_decay: 0.001
