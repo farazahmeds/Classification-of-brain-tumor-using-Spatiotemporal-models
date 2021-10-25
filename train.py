@@ -44,8 +44,12 @@ from sklearn.metrics import confusion_matrix
 from score_gen.confmatrix import plot_confusion_matrix
 
 from dataset.datasets import Datasets
+import wandb
+
+
 
 def train(config: DictConfig) -> None:
+    wandb.init(project=config.wandb_logger.project, entity=config.wandb_logger.entity, group=config.wandb_logger.group)
 
     cwd = os.getcwd()
     #
@@ -177,8 +181,8 @@ def train(config: DictConfig) -> None:
 
             logs['log loss'] = total_loss / total_images
             logs['Accuracy'] = ((total_correct / total_images) * 100)
-        tb.add_scalar('Training loss', loss, global_step=epoch)
-        tb.add_scalar('Training accuracy', running_trainacc, global_step=epoch)
+            wandb.log({'training accuracy': running_trainacc})
+
 
         print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
               .format(epoch + 1, config.training.num_epoch, i + 1, len(trainloader), (total_loss / total_images),
@@ -219,9 +223,10 @@ def train(config: DictConfig) -> None:
             validationacc = ((correct / total) * 100)
             logs['val_' + 'Accuracy'] = ((correct / total) * 100)
 
-        tb.add_scalar('Validation loss', validationloss, global_step=epoch)
-
-        tb.add_scalar('Validation accuracy', validationacc, global_step=epoch)
+            wandb.log({'test accuracy': validationacc, 'val loss': validationloss})
+        # tb.add_scalar('Validation loss', validationloss, global_step=epoch)
+        #
+        # tb.add_scalar('Validation accuracy', validationacc, global_step=epoch)
 
         # logs['accuracy'] = accuracy
         liveloss.update(logs)
