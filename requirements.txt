@@ -9,7 +9,6 @@ bzip2=1.0.8=h7b6447c_0
 ca-certificates=2021.7.5=h06a4308_1
 certifi=2021.5.30=py38h06a4308_0
 cudatoolkit=10.2.89=hfd86e86_1
-ffmpeg=4.3=hf484d3e_0
 freetype=2.10.4=h5ab3b9f_0
 gmp=6.2.1=h2531618_2
 gnutls=3.6.15=he1e5248_0
