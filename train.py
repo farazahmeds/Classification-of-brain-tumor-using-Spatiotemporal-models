@@ -181,7 +181,7 @@ def train(config: DictConfig) -> None:
         tb.add_scalar('Training accuracy', running_trainacc, global_step=epoch)
 
         print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
-              .format(epoch + 1, config.tranining.num_epoch, i + 1, len(trainloader), (total_loss / total_images),
+              .format(epoch + 1, config.training.num_epoch, i + 1, len(trainloader), (total_loss / total_images),
                       (total_correct / total_images) * 100))
 
 
