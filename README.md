@@ -8,7 +8,7 @@ models can be employed as "spatiospatial" models for this task. These models hav
 and temporal relationship, while reducing computational costs. This is an implementation of two spatiotemporal models, ResNet (2+1)D
 and ResNet Mixed Convolution, to classify different types of brain tumours. 
 <p align="center">
-<img src="meta/nets.png" alt="Your image title" width="500"/>
+<img src="meta/nets.png" alt="Spatiotemporal models and Conv3D model" width="500"/>
 </p>
 
 Preprint:
