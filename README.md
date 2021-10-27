@@ -16,6 +16,9 @@ and ResNet Mixed Convolution, to classify different types of brain tumours.
 Execute ```run.py```, you can change the hyperparameters and settings for your experiments by overriding them in ```config/confg.yaml``` file or overriding through command line example: ```python run.py training.batch_size=2``` 
 
 ##### Preprint: #####
+[Soumick Chatterjee, Faraz Ahmed Nizamani, Andreas Nürnberger, and Oliver Speck, Classification of Brain Tumours in MR Images using Deep Spatiospatial Models](https://arxiv.org/pdf/2105.14071.pdf)
+
+BibTeX:
 ```
 @article{chatterjee2021classification,
   title={Classification of Brain Tumours in MR Images using Deep Spatiospatial Models},
