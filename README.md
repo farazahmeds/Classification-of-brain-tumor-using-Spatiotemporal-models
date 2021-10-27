@@ -15,3 +15,13 @@ of 0.9345 and a test accuracy of 96.98%, while at the same time being the model 
 <p align="center">
 <img src="meta/nets.png" alt="Your image title" width="500"/>
 </p>
+
+
+Preprint:
+
+@article{chatterjee2021classification,
+  title={Classification of Brain Tumours in MR Images using Deep Spatiospatial Models},
+  author={Chatterjee, Soumick and Nizamani, Faraz Ahmed and N{\"u}rnberger, Andreas and Speck, Oliver},
+  journal={arXiv preprint arXiv:2105.14071},
+  year={2021}
+}
