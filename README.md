@@ -11,12 +11,12 @@ and ResNet Mixed Convolution, to classify different types of brain tumours.
 <img src="meta/nets.png" alt="Spatiotemporal models and Conv3D model" width="500"/>
 </p>
 
-#### Getting started: ####
+##### Getting started: #####
 
 Execute ```run.py```, you can change the hyperparameter for your experiments by overriding them in ```config/confg.yaml``` file or overrriding through command line example: ```python run.py training.batch_size=2``` 
 
-Preprint:
-```
+##### Preprint: #####```
+
 @article{chatterjee2021classification,
   title={Classification of Brain Tumours in MR Images using Deep Spatiospatial Models},
   author={Chatterjee, Soumick and Nizamani, Faraz Ahmed and N{\"u}rnberger, Andreas and Speck, Oliver},
