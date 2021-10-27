@@ -28,3 +28,8 @@ BibTeX:
 }
 ```
 
+This work was in part conducted within the context of the International Graduate School MEMoRIAL at Otto von Guericke
+University (OVGU) Magdeburg, Germany, kindly supported by the European Structural and Investment Funds (ESF) under the
+programme "Sachsen-Anhalt WISSENSCHAFT Internationalisierung" (project no. ZS/2016/08/80646).
+
+
