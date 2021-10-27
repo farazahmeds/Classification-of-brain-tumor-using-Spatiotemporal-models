@@ -11,6 +11,10 @@ and ResNet Mixed Convolution, to classify different types of brain tumours.
 <img src="meta/nets.png" alt="Spatiotemporal models and Conv3D model" width="500"/>
 </p>
 
+
+Markup :  #### How to run:####
+
+
 Preprint:
 ```
 @article{chatterjee2021classification,
@@ -20,3 +24,4 @@ Preprint:
   year={2021}
 }
 ```
+
