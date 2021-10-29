@@ -1,10 +1,9 @@
 # Classification-of-brain-tumor-using-Spatiotemporal-models
 
 Classifying tumours using such deep learning methods has made significant progress with the availability of open datasets with reliable annotations. 
-Typically those methods
-are either 3D models, which use 3D volumetric MRIs or even 2D models considering each slice separately. However, by
-treating one spatial dimension separately or by considering the slices as a sequence of images over time, spatiotemporal
-models can be employed as "spatiospatial" models for this task. These models have the capabilities of learning specific spatial
+Typically those methods are either 3D models, which use 3D volumetric MRIs or even 2D models considering each slice separately. However, by
+treating one spatial dimension separately or by considering the slices as a sequence of images over time, [spatiotemporal 
+models (Tran et al.)](https://arxiv.org/pdf/1708.05038.pdf) can be employed as "spatiospatial" models for this task. These models have the capabilities of learning specific spatial
 and temporal relationship, while reducing computational costs. This is an implementation of two spatiotemporal models, ResNet (2+1)D
 and ResNet Mixed Convolution, to classify different types of brain tumours. 
 <p align="center">
@@ -14,6 +13,11 @@ and ResNet Mixed Convolution, to classify different types of brain tumours.
 ##### Getting started: #####
 
 Execute ```run.py```, you can change the hyperparameters and settings for your experiments by overriding them in ```configs/config.yaml``` file or overriding through command line example: ```python run.py training.batch_size=2``` for multirun use ```-m``` flag, ```python run.py -m training.batch_size=2,5,10```.
+
+##### Dataset: #####
+
+The original implementation of this work was done using [BraTS 2019](https://www.med.upenn.edu/cbica/brats2019/data.html) dataset with high-grade and low-grade glioma samples, and using [IXI](https://brain-development.org/ixi-dataset/). The IXI samples were skull-stripped and resampled to be used as non-pathological, healthy brain subjects for the classification task. 
+
 
 ##### Preprint: #####
 [Soumick Chatterjee, Faraz Ahmed Nizamani, Andreas Nürnberger, and Oliver Speck, Classification of Brain Tumours in MR Images using Deep Spatiospatial Models](https://arxiv.org/pdf/2105.14071.pdf)
@@ -31,5 +35,6 @@ BibTeX:
 This work was in part conducted within the context of the International Graduate School MEMoRIAL at Otto von Guericke
 University (OVGU) Magdeburg, Germany, kindly supported by the European Structural and Investment Funds (ESF) under the
 programme "Sachsen-Anhalt WISSENSCHAFT Internationalisierung" (project no. ZS/2016/08/80646).
+
 
 
