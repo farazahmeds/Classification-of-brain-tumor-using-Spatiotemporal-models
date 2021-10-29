@@ -47,7 +47,7 @@ BibTeX:
 }
 ```
 ##### Special thanks to: #####
-1) Soumick Chatterjee (my supervisor and mentor)
+1) [Soumick Chatterjee](https://github.com/soumickmj) (my thesis supervisor and mentor)
 2) [Torchio and Fernando Pérez-García](https://github.com/fepegar/torchio)
 3) Tristan Payer
 
