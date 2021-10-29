@@ -7,7 +7,8 @@ Typically those methods are either 3D models, which use 3D volumetric MRIs or ev
 treating one spatial dimension separately or by considering the slices as a sequence of images over time, [spatiotemporal 
 models (Tran et al.)](https://arxiv.org/pdf/1708.05038.pdf) can be employed as "spatiospatial" models for this task. These models have the capabilities of learning specific spatial
 and temporal relationship, while reducing computational costs. This is an implementation of two spatiotemporal models, ResNet (2+1)D
-and ResNet Mixed Convolution, to classify different types of brain tumours. 
+and ResNet Mixed Convolution, and 3D Convolutions, to classify high-grade glioma, low-grade glioma, and healthy brain MR Images. 
+
 <p align="center">
 <img src="meta/nets.png" alt="Spatiotemporal models and Conv3D model" width="500"/>
 </p>
