@@ -27,7 +27,7 @@ The original implementation of this work was done using [BraTS 2019](https://www
 <img src="score_gen/scores.png" alt="Heatmaps" width="1000"/>
 </p>
 
-Heatmaps showing the class-wise performance of the classifiers, compared using Precision, Recall, Specificity, andF1-score: (a) LGG, (b) HGG, and (c) Healthy
+Heatmaps showing the class-wise performance of the classifiers, compared using Precision, Recall, Specificity, and F1-score: (a) LGG, (b) HGG, and (c) Healthy
 
 ##### Preprint: #####
 [Soumick Chatterjee, Faraz Ahmed Nizamani, Andreas Nürnberger, and Oliver Speck, Classification of Brain Tumours in MR Images using Deep Spatiospatial Models](https://arxiv.org/pdf/2105.14071.pdf)
