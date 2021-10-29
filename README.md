@@ -1,5 +1,7 @@
 # Classification-of-brain-tumor-using-Spatiotemporal-models
 
+##### Overview: #####
+
 Classifying tumours using such deep learning methods has made significant progress with the availability of open datasets with reliable annotations. 
 Typically those methods are either 3D models, which use 3D volumetric MRIs or even 2D models considering each slice separately. However, by
 treating one spatial dimension separately or by considering the slices as a sequence of images over time, [spatiotemporal 
