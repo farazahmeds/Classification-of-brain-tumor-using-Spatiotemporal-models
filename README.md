@@ -30,7 +30,7 @@ The original implementation of this work was done using [BraTS 2019](https://www
 Heatmaps showing the class-wise performance of the classifiers, compared using Precision, Recall, Specificity, and F1-score: (a) LGG, (b) HGG, and (c) Healthy
 
 <p align="center">
-<img src="score_gen/pretrained_mixed_conv.png.png" alt="confusion matrix pretrained resnet mixed conv" width="1000"/>
+<img src="score_gen/pretrained_mixed_conv.png" alt="confusion matrix pretrained resnet mixed conv" width="1000"/>
 </p>
 Confusion matrix for pretrained resnet Mixed Convolution
 
