@@ -18,6 +18,12 @@ Execute ```run.py```, you can change the hyperparameters and settings for your e
 
 The original implementation of this work was done using [BraTS 2019](https://www.med.upenn.edu/cbica/brats2019/data.html) dataset with high-grade and low-grade glioma samples, and using [IXI](https://brain-development.org/ixi-dataset/). The IXI samples were skull-stripped and resampled to be used as non-pathological, healthy brain subjects for the classification task. 
 
+##### Results: #####
+
+<p align="center">
+<img src="score_gen/scores.png" alt="Heatmaps" width="500"/>
+</p>
+
 
 ##### Preprint: #####
 [Soumick Chatterjee, Faraz Ahmed Nizamani, Andreas Nürnberger, and Oliver Speck, Classification of Brain Tumours in MR Images using Deep Spatiospatial Models](https://arxiv.org/pdf/2105.14071.pdf)
