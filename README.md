@@ -21,7 +21,7 @@ The original implementation of this work was done using [BraTS 2019](https://www
 ##### Results: #####
 
 <p align="center">
-<img src="score_gen/scores.png" alt="Heatmaps" width="500"/>
+<img src="score_gen/scores.png" alt="Heatmaps" width="1000"/>
 </p>
 
 
