@@ -66,7 +66,7 @@ def train(config: DictConfig) -> None:
     class_weights = torch.FloatTensor([3.54,1,1]).cuda()
 
     #Transforms
-    rescale = RescaleIntensity((0.05, 99.5))
+    rescale = RescaleIntensity((0.05, 99.0))
     randaffine = torchio.RandomAffine(scales=(0.9,1.2),degrees=10, isotropic=True, image_interpolation='nearest')
     flip = torchio.RandomFlip(axes=('LR'), p=0.5)
     croporpad = CropOrPad(target_shape=(240, 240, 155))
