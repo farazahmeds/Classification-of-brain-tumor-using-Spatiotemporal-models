@@ -27,14 +27,12 @@ from torchio.transforms import (
     Compose,
 )
 
-import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage import zoom
 
 import os
 from pathlib import Path
 
-import numpy as np
 from torchvision.transforms import transforms
 
 from sklearn.metrics import confusion_matrix
@@ -44,36 +42,35 @@ from dataset.datasets import Datasets
 import wandb
 
 
-
 def train(config: DictConfig) -> None:
+    
     wandb.init(project=config.wandb_logger.project, entity=config.wandb_logger.entity, group=config.wandb_logger.group)
 
     cwd = os.getcwd()
 
     volumes = hydra.utils.instantiate(config.dataset_)
 
-    total_Samples = volumes.return_total_samples()
-    
+    total_samples = volumes.return_total_samples()
+
     torch.manual_seed(config.global_seed)
 
     load_model = config.load_model
-    
+
     class_weights = torch.FloatTensor([3.54,1,1]).cuda() #for dataset being unbalanced for classes [LGG, HGG, Healthy]
 
     #Transforms
-    
+
     rescale = RescaleIntensity((0.05, 99.5))
     randaffine = torchio.RandomAffine(scales=(0.9,1.2),degrees=10, isotropic=True, image_interpolation='nearest')
     flip = torchio.RandomFlip(axes=('LR'), p=0.5)
-    croporpad = CropOrPad(target_shape=(240, 240, 155))
     transforms = [rescale, flip, randaffine]
 
     transform = Compose(transforms)
 
-    subjects_dataset = torchio.SubjectsDataset(total_Samples, transform=transform)
+    subjects_dataset = torchio.SubjectsDataset(total_samples, transform=transform)
 
-    train_set_samples = (int(len(total_Samples)-0.3*len(total_Samples)))  #train_test_split
-    test_set_samples =  (int(len(total_Samples))-(train_set_samples))
+    train_set_samples = (int(len(total_samples)-0.3*len(total_samples)))  #train_test_split
+    test_set_samples = (int(len(total_samples))-(train_set_samples))
 
     trainset, testset = torch.utils.data.random_split(subjects_dataset, [train_set_samples, test_set_samples], generator=torch.Generator().manual_seed(config.dataset.train_test_split_seed))
 
@@ -81,7 +78,7 @@ def train(config: DictConfig) -> None:
     testloader = DataLoader(dataset=testset,   batch_size=config.training.batch_size, shuffle=True)
 
     #instantiate the overriden classes:
-    
+
     if config.models.model == 'resnet2p1':
         model = torchvision.models.video.r2plus1d_18(pretrained=config.pretrain)
         model.stem = hydra.utils.instantiate(config.resnet2p1Stem)
@@ -93,7 +90,7 @@ def train(config: DictConfig) -> None:
         model.stem = hydra.utils.instantiate(config.conv3dStem)
 
     # regularization
-    
+
     model.fc = nn.Sequential(
         nn.Dropout(config.training.dropout),
         nn.Linear(model.fc.in_features, config.training.num_classes)
@@ -109,7 +106,6 @@ def train(config: DictConfig) -> None:
     predlist = torch.zeros(0, dtype=torch.long).to('cuda:0')
     lbllist = torch.zeros(0, dtype=torch.long).to('cuda:0')
 
-    
     if load_model:
         the_model = torch.load(Path(cwd,'outputs'))
 
@@ -140,11 +136,6 @@ def train(config: DictConfig) -> None:
             # Forward propagation
             outputs = model(images)
 
-
-            # Calculating loss with softmax to obtain cross entropy loss
-
-            # loss = criterion(outputs, labels)
-
             loss = criterion(outputs, labels)  # ....>
 
             # Backward prop
@@ -172,11 +163,9 @@ def train(config: DictConfig) -> None:
             logs['Accuracy'] = ((total_correct / total_images) * 100)
             wandb.log({'training accuracy': running_trainacc})
 
-
         print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
               .format(epoch + 1, config.training.num_epoch, i + 1, len(trainloader), (total_loss / total_images),
                       (total_correct / total_images) * 100))
-
 
         # Testing the model
 
@@ -214,16 +203,8 @@ def train(config: DictConfig) -> None:
 
             wandb.log({'test accuracy': validationacc, 'val loss': validationloss})
 
-        conf_mat = confusion_matrix(lbllist.cpu().numpy(), predlist.cpu().numpy())
-        print(conf_mat)
-        cls = ["lower grade glioma (LGG)", "Glioblastoma (GBM/high grade glioma)", "Normal Brain"]
-        # Per-class accuracy
-        class_accuracy = 100 * conf_mat.diagonal() / conf_mat.sum(1)
-        print(class_accuracy)
-
-    #Computing metrics:
-
-    # Confusion matrix
+    # Computing metrics:
+   
     conf_mat = confusion_matrix(lbllist.cpu().numpy(), predlist.cpu().numpy())
 
     print(conf_mat)
@@ -231,7 +212,6 @@ def train(config: DictConfig) -> None:
     # Per-class accuracy
     class_accuracy = 100 * conf_mat.diagonal() / conf_mat.sum(1)
     print(class_accuracy)
-
     plt.figure(figsize=(10, 10))
     plot_confusion_matrix(conf_mat, cls)
     plt.show()
