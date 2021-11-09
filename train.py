@@ -30,15 +30,12 @@ from torchio.transforms import (
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage import zoom
-from livelossplot import PlotLosses
 
 import os
 from pathlib import Path
 
 import numpy as np
 from torchvision.transforms import transforms
-from torch.utils.tensorboard import SummaryWriter
-# from apex.apex import amp
 
 from sklearn.metrics import confusion_matrix
 from score_gen.confmatrix import plot_confusion_matrix
@@ -52,20 +49,19 @@ def train(config: DictConfig) -> None:
     wandb.init(project=config.wandb_logger.project, entity=config.wandb_logger.entity, group=config.wandb_logger.group)
 
     cwd = os.getcwd()
-    #
-    # path_to_volumes = Path(cwd, 'dataset')
+
     volumes = hydra.utils.instantiate(config.dataset_)
 
-    # volumes = Datasets(path_to_volumes)
-
     total_Samples = volumes.return_total_samples()
+    
     torch.manual_seed(config.global_seed)
 
     load_model = config.load_model
-
-    class_weights = torch.FloatTensor([3.54,1,1]).cuda()
+    
+    class_weights = torch.FloatTensor([3.54,1,1]).cuda() #for dataset being unbalanced for classes [LGG, HGG, Healthy]
 
     #Transforms
+    
     rescale = RescaleIntensity((0.05, 99.5))
     randaffine = torchio.RandomAffine(scales=(0.9,1.2),degrees=10, isotropic=True, image_interpolation='nearest')
     flip = torchio.RandomFlip(axes=('LR'), p=0.5)
@@ -74,7 +70,6 @@ def train(config: DictConfig) -> None:
 
     transform = Compose(transforms)
 
-    # ImagesDataset is a subclass of torch.data.utils.Dataset
     subjects_dataset = torchio.SubjectsDataset(total_Samples, transform=transform)
 
     train_set_samples = (int(len(total_Samples)-0.3*len(total_Samples)))  #train_test_split
@@ -85,6 +80,8 @@ def train(config: DictConfig) -> None:
     trainloader = DataLoader(dataset=trainset,  batch_size=config.training.batch_size, shuffle=True)
     testloader = DataLoader(dataset=testset,   batch_size=config.training.batch_size, shuffle=True)
 
+    #instantiate the overriden classes:
+    
     if config.models.model == 'resnet2p1':
         model = torchvision.models.video.r2plus1d_18(pretrained=config.pretrain)
         model.stem = hydra.utils.instantiate(config.resnet2p1Stem)
@@ -96,13 +93,11 @@ def train(config: DictConfig) -> None:
         model.stem = hydra.utils.instantiate(config.conv3dStem)
 
     # regularization
-
+    
     model.fc = nn.Sequential(
         nn.Dropout(config.training.dropout),
         nn.Linear(model.fc.in_features, config.training.num_classes)
     )
-
-    liveloss = PlotLosses()
 
     model.to('cuda:0')
 
@@ -114,13 +109,9 @@ def train(config: DictConfig) -> None:
     predlist = torch.zeros(0, dtype=torch.long).to('cuda:0')
     lbllist = torch.zeros(0, dtype=torch.long).to('cuda:0')
 
-    # model, optimizer = amp.initialize(model, optimizer, opt_level=config.model.opt_level)
-
-    tb = SummaryWriter(Path(os.path.join(cwd, 'runs')))
-
+    
     if load_model:
         the_model = torch.load(Path(cwd,'outputs'))
-
 
     for epoch in range(config.training.num_epoch):
 
@@ -158,8 +149,6 @@ def train(config: DictConfig) -> None:
 
             # Backward prop
             loss.backward()
-            # with amp.scale_loss(loss, optimizer) as scaled_loss:
-            #     scaled_loss.backward()
 
             # Updating gradients
             optimizer.step()
@@ -196,7 +185,7 @@ def train(config: DictConfig) -> None:
             total = 0
 
             for testdata in testloader:
-                # print ("for testdata in testloader, len of testdata",len(testdata))
+
                 images = F.interpolate(testdata['t1'][torchio.DATA], scale_factor=(config.dataset.img_scale_factor,config.dataset.img_scale_factor,config.dataset.img_scale_factor)).to('cuda:0')
 
                 labels = testdata['label'].to('cuda:0')
@@ -224,21 +213,13 @@ def train(config: DictConfig) -> None:
             logs['val_' + 'Accuracy'] = ((correct / total) * 100)
 
             wandb.log({'test accuracy': validationacc, 'val loss': validationloss})
-        # tb.add_scalar('Validation loss', validationloss, global_step=epoch)
-        #
-        # tb.add_scalar('Validation accuracy', validationacc, global_step=epoch)
 
-        # logs['accuracy'] = accuracy
-        liveloss.update(logs)
-        # start_epoch+=1
         conf_mat = confusion_matrix(lbllist.cpu().numpy(), predlist.cpu().numpy())
         print(conf_mat)
         cls = ["lower grade glioma (LGG)", "Glioblastoma (GBM/high grade glioma)", "Normal Brain"]
         # Per-class accuracy
         class_accuracy = 100 * conf_mat.diagonal() / conf_mat.sum(1)
         print(class_accuracy)
-
-    liveloss.draw()
 
     #Computing metrics:
 
