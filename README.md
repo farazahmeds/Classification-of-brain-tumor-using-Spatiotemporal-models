@@ -51,7 +51,7 @@ BibTeX:
 ```
 ##### Special thanks to: #####
 1) [Soumick Chatterjee](https://github.com/soumickmj)
-2) [Torchio and Fernando Pérez-García](https://github.com/fepegar/torchio)
+2) [TorchIO and Fernando Pérez-García](https://github.com/fepegar/torchio)
 3) [Tristan Payer](https://github.com/sirtris) 
 
 This work was in part conducted within the context of the International Graduate School MEMoRIAL at Otto von Guericke
